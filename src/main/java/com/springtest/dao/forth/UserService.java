@@ -15,7 +15,7 @@ public class UserService {
     public static final int MIN_COUNT_FOR_SILVER = 50;
     public static final int MIN_RECOMMEND_FOR_GOLD = 30;
 
-//    private final MailService mailService;
+    private final MailService mailService;
 
     public static List<User> users = Arrays.asList(
             User.of("id1", "park1", Level.BASIC, 50, 30),
@@ -30,16 +30,16 @@ public class UserService {
         for (User user : users) {
             if(canUpgradeLevel(user)) {
                 user.upgradeLevel();
-//                sendUpgradeEMail(user);
+                sendUpgradeEMail(user);
             }
         }
     }
 
-//    private void sendUpgradeEMail(User user) {
-//        //원래는 user.email()로 보내야함
-//        mailService.sendMail("1004mapa2@naver.com", "메일 테스트", "ㅎㅇㅋㅋ");
-//
-//    }
+    private void sendUpgradeEMail(User user) {
+        //원래는 user.email()로 보내야함
+        mailService.sendMail("1004mapa2@naver.com", "메일 테스트", "ㅎㅇㅋㅋ");
+
+    }
 
     private boolean canUpgradeLevel(User user) {
         Level currentLevel = user.getLevel();
