@@ -23,4 +23,9 @@ public class TransactionService {
         add(id, name);
         throw new RuntimeException("test exception");
     }
+
+    @Transactional(readOnly = true)
+    public void readOnlyTest(int id, String name) {
+        add(id, name);
+    }
 }
