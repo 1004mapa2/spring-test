@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.springtest.six.TestMapper">
+    <insert id="add">
+        INSERT INTO first.diary.test (id, name)
+        VALUES (#{id}, #{name})
+    </insert>
+
+    <select id="getName" resultType="string">
+        SELECT name FROM first.diary.test WHERE id = #{id}
+    </select>
+
+</mapper>
