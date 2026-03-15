@@ -3,6 +3,8 @@ package com.springtest.six;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.ClassFilter;
+import org.springframework.aop.Pointcut;
 import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
@@ -78,6 +80,39 @@ public class ProxyTest {
         public Object invoke(MethodInvocation invocation) throws Throwable {
             String ret = (String) invocation.proceed();
             return ret.toUpperCase();
+        }
+    }
+
+    @Test
+    void classNamePointcutAdvisor() {
+        NameMatchMethodPointcut classMethodPointcut = new NameMatchMethodPointcut() {
+            public ClassFilter getClassFilter() {
+                return new ClassFilter() {
+                    public boolean matches(Class clazz) {
+                        return clazz.getSimpleName().startsWith("HelloT");
+                    }
+                };
+            }
+        };
+        classMethodPointcut.setMappedName("sayH*");
+
+        checkAdviced(new HelloTarget(), classMethodPointcut, true);
+        class HelloWorld extends HelloTarget{}
+        checkAdviced(new HelloWorld(), classMethodPointcut, true);
+        class HelloPark extends HelloTarget{}
+        checkAdviced(new HelloPark(), classMethodPointcut, true);
+    }
+
+    private void checkAdviced(Object target, Pointcut pointcut, boolean adviced) {
+        ProxyFactoryBean pfBean = new ProxyFactoryBean();
+        pfBean.setTarget(target);
+        pfBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice()));
+        Hello proxiedHello = (Hello) pfBean.getObject();
+
+        if(adviced) {
+            assertThat(proxiedHello.sayHello("park")).isEqualTo("HELLO PARK");
+            assertThat(proxiedHello.sayHi("park")).isEqualTo("HI PARK");
+            assertThat(proxiedHello.sayThankYou("park")).isEqualTo("Thank You park");
         }
     }
 }
